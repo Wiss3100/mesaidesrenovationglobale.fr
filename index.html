@@ -82,6 +82,7 @@
         <h1>Quelle est la surface habitable approximative de votre logement ?</h1>
         <label for="surface">Surface en m²</label>
         <input type="number" id="surface" name="surface" required>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="2">
@@ -95,6 +96,7 @@
           <option value="pac">Pompe à chaleur</option>
           <option value="charbon">Charbon</option>
         </select>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="3">
@@ -110,6 +112,7 @@
           <option value="G">G</option>
           <option value="NC">Je ne sais pas</option>
         </select>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="4">
@@ -119,12 +122,14 @@
           <option value="oui">Oui</option>
           <option value="non">Non</option>
         </select>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="5">
         <h1>Où se situe le logement ?</h1>
         <label for="code_postal">Code postal</label>
         <input type="text" id="code_postal" name="code_postal" required>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="6">
@@ -135,16 +140,19 @@
           <option value="proprietaire_bailleur">Propriétaire bailleur</option>
           <option value="locataire">Locataire</option>
         </select>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="7">
         <h1>Combien de personnes composent votre foyer fiscal ?</h1>
         <input type="number" name="foyer" id="foyer" required>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="8">
         <h1>Quel est votre revenu fiscal de référence ?</h1>
         <input type="number" name="revenu" id="revenu" required>
+        <button type="button" class="button" onclick="nextStep()">Suivant</button>
       </div>
 
       <div class="step" data-step="9">
@@ -157,14 +165,12 @@
         <input type="text" name="email" id="email" required>
         <label for="tel">Téléphone</label>
         <input type="text" name="tel" id="tel" required>
+        <button type="button" class="button" onclick="nextStep()">Valider</button>
       </div>
-
-      <button type="submit" class="button">Continuer</button>
     </form>
   </div>
 
   <script>
-    const form = document.getElementById('simulatorForm');
     const steps = document.querySelectorAll('.step');
     const progressBar = document.getElementById('progressBar');
     let currentStep = 0;
@@ -176,28 +182,21 @@
       progressBar.style.width = ((index + 1) / steps.length * 100) + '%';
     }
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const step = steps[currentStep];
-      const input = step.querySelectorAll('input, select');
-
-      for (let field of input) {
+    function nextStep() {
+      const currentFields = steps[currentStep].querySelectorAll('input, select');
+      for (let field of currentFields) {
         if (!field.checkValidity()) {
           field.reportValidity();
           return;
         }
       }
-
       currentStep++;
       if (currentStep < steps.length) {
         showStep(currentStep);
       } else {
         alert("Simulation complète ! Merci 🙏");
-        form.reset();
-        currentStep = 0;
-        showStep(currentStep);
       }
-    });
+    }
 
     showStep(currentStep);
   </script>
