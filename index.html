@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateur MaPrimeRénov'</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f6f9ff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 16px;
+    }
+    .container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 600px;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .button {
+      background-color: #3f5efb;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .button:hover {
+      opacity: 0.95;
+    }
+    .progress {
+      height: 6px;
+      background-color: #eee;
+      margin-bottom: 24px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #3f5efb;
+      width: 0;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <form id="simulatorForm">
+      <div class="step active" data-step="1">
+        <h1>Quelle est la surface habitable approximative de votre logement ?</h1>
+        <label for="surface">Surface en m²</label>
+        <input type="number" id="surface" name="surface" required>
+      </div>
+
+      <div class="step" data-step="2">
+        <h1>Quel est votre mode de chauffage principal ?</h1>
+        <select id="chauffage" name="chauffage" required>
+          <option value="">-- Choisissez --</option>
+          <option value="fioul">Fioul</option>
+          <option value="electrique">Électrique</option>
+          <option value="gaz">Gaz</option>
+          <option value="bois">Bois</option>
+          <option value="pac">Pompe à chaleur</option>
+          <option value="charbon">Charbon</option>
+        </select>
+      </div>
+
+      <div class="step" data-step="3">
+        <h1>Quelle est la classe énergétique (DPE) de votre logement ?</h1>
+        <select id="dpe" name="dpe" required>
+          <option value="">-- Choisissez --</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+          <option value="G">G</option>
+          <option value="NC">Je ne sais pas</option>
+        </select>
+      </div>
+
+      <div class="step" data-step="4">
+        <h1>Disposez-vous d'une pièce non chauffée ?</h1>
+        <select id="piece_non_chauffee" name="piece_non_chauffee" required>
+          <option value="">-- Choisissez --</option>
+          <option value="oui">Oui</option>
+          <option value="non">Non</option>
+        </select>
+      </div>
+
+      <div class="step" data-step="5">
+        <h1>Où se situe le logement ?</h1>
+        <label for="code_postal">Code postal</label>
+        <input type="text" id="code_postal" name="code_postal" required>
+      </div>
+
+      <div class="step" data-step="6">
+        <h1>Quel est votre statut ?</h1>
+        <select id="statut" name="statut" required>
+          <option value="">-- Choisissez --</option>
+          <option value="proprietaire_occupant">Propriétaire occupant</option>
+          <option value="proprietaire_bailleur">Propriétaire bailleur</option>
+          <option value="locataire">Locataire</option>
+        </select>
+      </div>
+
+      <div class="step" data-step="7">
+        <h1>Combien de personnes composent votre foyer fiscal ?</h1>
+        <input type="number" name="foyer" id="foyer" required>
+      </div>
+
+      <div class="step" data-step="8">
+        <h1>Quel est votre revenu fiscal de référence ?</h1>
+        <input type="number" name="revenu" id="revenu" required>
+      </div>
+
+      <div class="step" data-step="9">
+        <h1>Vos coordonnées</h1>
+        <label for="prenom">Prénom</label>
+        <input type="text" name="prenom" id="prenom" required>
+        <label for="nom">Nom</label>
+        <input type="text" name="nom" id="nom" required>
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" required>
+        <label for="tel">Téléphone</label>
+        <input type="text" name="tel" id="tel" required>
+      </div>
+
+      <button type="submit" class="button">Continuer</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('simulatorForm');
+    const steps = document.querySelectorAll('.step');
+    const progressBar = document.getElementById('progressBar');
+    let currentStep = 0;
+
+    function showStep(index) {
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', i === index);
+      });
+      progressBar.style.width = ((index + 1) / steps.length * 100) + '%';
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const step = steps[currentStep];
+      const input = step.querySelectorAll('input, select');
+
+      for (let field of input) {
+        if (!field.checkValidity()) {
+          field.reportValidity();
+          return;
+        }
+      }
+
+      currentStep++;
+      if (currentStep < steps.length) {
+        showStep(currentStep);
+      } else {
+        alert("Simulation complète ! Merci 🙏");
+        form.reset();
+        currentStep = 0;
+        showStep(currentStep);
+      }
+    });
+
+    showStep(currentStep);
+  </script>
+</body>
+</html>
