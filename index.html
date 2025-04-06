@@ -291,8 +291,9 @@
       }
 
       currentStep++;
-      if (currentStep < steps.length) {
-        showStep(currentStep);
+      if (currentStep < steps.length - 1) {
+      showStep(currentStep);
+
 
         const chauffageRadios = document.querySelectorAll('input[name="chauffage"]');
         chauffageRadios.forEach(radio => {
@@ -320,11 +321,9 @@
           });
         });
       } 
+    } else {
+      document.getElementById('simulatorForm').submit();
     }
-
-    
-      
-
     showStep(currentStep);
   </script>
 </body>
