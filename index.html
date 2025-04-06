@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulateur d'Aides</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <form id="formulaire">
+      <div class="form-step active">
+        <h2>Quel est votre type de bien ?</h2>
+        <select required>
+          <option value="">Sélectionner</option>
+          <option value="Maison">Maison</option>
+          <option value="Appartement">Appartement</option>
+        </select>
+        <button type="button" class="next-btn">Suivant</button>
+      </div>
+
+      <div class="form-step">
+        <h2>Quelle est votre situation ?</h2>
+        <select required>
+          <option value="">Sélectionner</option>
+          <option value="Propriétaire">Propriétaire</option>
+          <option value="Locataire">Locataire</option>
+        </select>
+        <button type="button" class="prev-btn">Précédent</button>
+        <button type="button" class="next-btn">Suivant</button>
+      </div>
+
+      <div class="form-step">
+        <h2>Quel est votre système de chauffage ?</h2>
+        <select required>
+          <option value="">Sélectionner</option>
+          <option value="Électrique">Électrique</option>
+          <option value="Gaz">Gaz</option>
+          <option value="Fioul">Fioul</option>
+        </select>
+        <button type="button" class="prev-btn">Précédent</button>
+        <button type="submit">Envoyer</button>
+      </div>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
