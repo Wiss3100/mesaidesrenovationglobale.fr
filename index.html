@@ -282,49 +282,51 @@
     }
 
     function nextStep() {
-      const currentFields = steps[currentStep].querySelectorAll('input[type="radio"], input[type="number"]');
-      for (let field of currentFields) {
-        if (!field.checkValidity()) {
-          field.reportValidity();
-          return;
-        }
-      }
+  const currentFields = steps[currentStep].querySelectorAll('input[required], input[type="radio"]');
+  for (let field of currentFields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      return;
+    }
+  }
 
-      currentStep++;
-      if (currentStep < steps.length - 1) {
-      showStep(currentStep);
+  currentStep++;
 
+  if (currentStep < steps.length) {
+    showStep(currentStep);
 
-        const chauffageRadios = document.querySelectorAll('input[name="chauffage"]');
-        chauffageRadios.forEach(radio => {
-          radio.addEventListener('change', () => {
-            const value = radio.value;
-            const equipements = {
-              fioul: ['Chaudière à condensation', 'Chaudière classique', 'Je ne sais pas'],
-              gaz: ['Chaudière gaz à condensation', 'Chaudière classique', 'Radiateur à gaz', 'Je ne sais pas'],
-              electrique: ['Radiateur', 'Chauffage au sol', 'Convecteur', 'Je ne sais pas'],
-              bois: ['Poêle à bois', 'Insert cheminée', 'Chaudière bois', 'Je ne sais pas'],
-              pac: ['Air/Eau', 'Air/Air', 'Je ne sais pas'],
-              charbon: ['Poêle charbon', 'Chaudière charbon']
-            };
-            const emoji = {
-              fioul: '🛢️', gaz: '🔥', electrique: '⚡', bois: '🪵', pac: '♻️', charbon: '🪨'
-            };
-            const container = document.getElementById('equipementsContainer');
-            container.innerHTML = '';
-            equipements[value].forEach(option => {
-              const label = document.createElement('label');
-              label.className = 'option';
-              label.innerHTML = `<input type="radio" name="equipement" value="${option}" required> ${emoji[value]} ${option}`;
-              container.appendChild(label);
-            });
+    if (currentStep === 2) {
+      const chauffageRadios = document.querySelectorAll('input[name="chauffage"]');
+      const equipements = {
+        fioul: ['Chaudière à condensation', 'Chaudière classique', 'Je ne sais pas'],
+        gaz: ['Chaudière gaz à condensation', 'Chaudière classique', 'Radiateur à gaz', 'Je ne sais pas'],
+        electrique: ['Radiateur', 'Chauffage au sol', 'Convecteur', 'Je ne sais pas'],
+        bois: ['Poêle à bois', 'Insert cheminée', 'Chaudière bois', 'Je ne sais pas'],
+        pac: ['Air/Eau', 'Air/Air', 'Je ne sais pas'],
+        charbon: ['Poêle charbon', 'Chaudière charbon']
+      };
+      const emoji = {
+        fioul: '🛢️', gaz: '🔥', electrique: '⚡', bois: '🪵', pac: '♻️', charbon: '🪨'
+      };
+      const container = document.getElementById('equipementsContainer');
+
+      chauffageRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const value = radio.value;
+          container.innerHTML = '';
+          equipements[value].forEach(option => {
+            const label = document.createElement('label');
+            label.className = 'option';
+            label.innerHTML = `<input type="radio" name="equipement" value="${option}" required> ${emoji[value]} ${option}`;
+            container.appendChild(label);
           });
         });
-      } 
-    } else {
-      document.getElementById('simulatorForm').submit();
+      });
     }
-    showStep(currentStep);
+  } else {
+    document.getElementById('simulatorForm').submit();
+  }
+}
   </script>
 </body>
 </html>
