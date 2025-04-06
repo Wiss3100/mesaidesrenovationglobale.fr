@@ -130,7 +130,7 @@
   <h2 class="title">Mes Aides Rénovation ♻️</h2>
   <div class="container">
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-    <form id="simulatorForm">
+    <form id="simulatorForm" action="https://formspree.io/f/xeoapgjz" method="POST">
 
       <!-- Étape 1 -->
       <div class="step active">
@@ -324,10 +324,8 @@
       }
     }
 
-    document.getElementById("simulatorForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Simulation complète ! Merci 🙏\nVous recevrez très bientôt votre compte rendu");
-    });
+    
+      
 
     showStep(currentStep);
   </script>
