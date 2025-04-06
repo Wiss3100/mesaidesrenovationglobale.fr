@@ -10,10 +10,17 @@
       font-family: 'Arial', sans-serif;
       background-color: #f6f9ff;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      align-items: flex-start;
       min-height: 100vh;
       padding: 40px 16px;
+    }
+    h2.title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
     }
     .container {
       background-color: white;
@@ -72,101 +79,106 @@
       width: 0;
       transition: width 0.3s;
     }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background-color: #f0f4ff;
+    }
+    .option input {
+      margin: 0;
+    }
   </style>
 </head>
 <body>
+  <h2 class="title">Mes Aides Rénovation</h2>
   <div class="container">
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
     <form id="simulatorForm">
-      <div class="step active" data-step="1">
+
+      <!-- Étape 1 -->
+      <div class="step active">
         <h1>Quelle est la surface habitable approximative de votre logement ?</h1>
         <label for="surface">Surface en m²</label>
-        <input type="number" id="surface" name="surface" required>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+        <input type="number" id="surface" name="surface" required min="9">
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="2">
-        <h1>Quel est votre mode de chauffage principal ?</h1>
-        <select id="chauffage" name="chauffage" required>
-          <option value="">-- Choisissez --</option>
-          <option value="fioul">Fioul</option>
-          <option value="electrique">Électrique</option>
-          <option value="gaz">Gaz</option>
-          <option value="bois">Bois</option>
-          <option value="pac">Pompe à chaleur</option>
-          <option value="charbon">Charbon</option>
-        </select>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+      <!-- Étape 2 -->
+      <div class="step">
+        <h1>Aujourd’hui, quel est votre mode de chauffage principal pour ce logement ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="chauffage" value="fioul" required> 🛢️ Chauffage au fioul</label>
+          <label class="option"><input type="radio" name="chauffage" value="electrique"> ⚡ Chauffage électrique</label>
+          <label class="option"><input type="radio" name="chauffage" value="gaz"> 🔥 Chauffage au gaz</label>
+          <label class="option"><input type="radio" name="chauffage" value="bois"> 🪵 Chauffage au bois</label>
+          <label class="option"><input type="radio" name="chauffage" value="pac"> ♻️ Pompe à chaleur</label>
+          <label class="option"><input type="radio" name="chauffage" value="charbon"> 🪨 Chauffage au charbon</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="3">
-        <h1>Quelle est la classe énergétique (DPE) de votre logement ?</h1>
-        <select id="dpe" name="dpe" required>
-          <option value="">-- Choisissez --</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-          <option value="E">E</option>
-          <option value="F">F</option>
-          <option value="G">G</option>
-          <option value="NC">Je ne sais pas</option>
-        </select>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+      <!-- Étape 3 -->
+      <div class="step">
+        <h1>Quel est le type d’équipement installé ?</h1>
+        <div class="options-grid" id="equipementsContainer"></div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="4">
-        <h1>Disposez-vous d'une pièce non chauffée ?</h1>
-        <select id="piece_non_chauffee" name="piece_non_chauffee" required>
-          <option value="">-- Choisissez --</option>
-          <option value="oui">Oui</option>
-          <option value="non">Non</option>
-        </select>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+      <!-- Étape 4 -->
+      <div class="step">
+        <h1>Adresse du bien</h1>
+        <label for="adresse">🏡 Adresse complète</label>
+        <input type="text" id="adresse" name="adresse" required>
+        <label for="codepostal">📍 Code postal</label>
+        <input type="text" id="codepostal" name="codepostal" pattern="[0-9]{5}" required>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="5">
-        <h1>Où se situe le logement ?</h1>
-        <label for="code_postal">Code postal</label>
-        <input type="text" id="code_postal" name="code_postal" required>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+      <!-- Étape 5 -->
+      <div class="step">
+        <h1>Quelle est la date de construction de votre logement ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="annee_construction" value="nc" required> ❓ Je ne sais pas</label>
+          <label class="option"><input type="radio" name="annee_construction" value="-1948"> 🏠 Avant 1948</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1949-1974"> 📅 1949 à 1974</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1975-1982"> 📅 1975 à 1982</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1983-2000"> 📅 1983 à 2000</label>
+          <label class="option"><input type="radio" name="annee_construction" value="2001-2012"> 📅 2001 à 2012</label>
+          <label class="option"><input type="radio" name="annee_construction" value="2013+"> 📅 Après 2012</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="6">
-        <h1>Quel est votre statut ?</h1>
-        <select id="statut" name="statut" required>
-          <option value="">-- Choisissez --</option>
-          <option value="proprietaire_occupant">Propriétaire occupant</option>
-          <option value="proprietaire_bailleur">Propriétaire bailleur</option>
-          <option value="locataire">Locataire</option>
-        </select>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
+      <!-- Étape 6 -->
+      <div class="step">
+        <h1>Quelle est la classe énergétique de votre logement ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="dpe" value="A" required> 🟢 A</label>
+          <label class="option"><input type="radio" name="dpe" value="B"> 🟢 B</label>
+          <label class="option"><input type="radio" name="dpe" value="C"> 🟡 C</label>
+          <label class="option"><input type="radio" name="dpe" value="D"> 🟠 D</label>
+          <label class="option"><input type="radio" name="dpe" value="E"> 🔴 E</label>
+          <label class="option"><input type="radio" name="dpe" value="F"> 🔴 F</label>
+          <label class="option"><input type="radio" name="dpe" value="G"> 🔴 G</label>
+          <label class="option"><input type="radio" name="dpe" value="NC"> ❓ Je ne sais pas</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
       </div>
 
-      <div class="step" data-step="7">
-        <h1>Combien de personnes composent votre foyer fiscal ?</h1>
-        <input type="number" name="foyer" id="foyer" required>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
-      </div>
-
-      <div class="step" data-step="8">
-        <h1>Quel est votre revenu fiscal de référence ?</h1>
-        <input type="number" name="revenu" id="revenu" required>
-        <button type="button" class="button" onclick="nextStep()">Suivant</button>
-      </div>
-
-      <div class="step" data-step="9">
-        <h1>Vos coordonnées</h1>
-        <label for="prenom">Prénom</label>
-        <input type="text" name="prenom" id="prenom" required>
-        <label for="nom">Nom</label>
-        <input type="text" name="nom" id="nom" required>
-        <label for="email">Email</label>
-        <input type="text" name="email" id="email" required>
-        <label for="tel">Téléphone</label>
-        <input type="text" name="tel" id="tel" required>
-        <button type="button" class="button" onclick="nextStep()">Valider</button>
-      </div>
     </form>
   </div>
 
@@ -183,13 +195,44 @@
     }
 
     function nextStep() {
-      const currentFields = steps[currentStep].querySelectorAll('input, select');
+      const currentFields = steps[currentStep].querySelectorAll('input[type="radio"], input[type="number"]');
       for (let field of currentFields) {
         if (!field.checkValidity()) {
           field.reportValidity();
           return;
         }
       }
+
+      if (currentStep === 1) {
+        const selected = document.querySelector('input[name="chauffage"]:checked');
+        const value = selected ? selected.value : null;
+        const equipements = {
+          fioul: ['Chaudière à condensation', 'Chaudière classique', 'Je ne sais pas'],
+          gaz: ['Chaudière gaz à condensation', 'Chaudière classique', 'Radiateur à gaz', 'Je ne sais pas'],
+          electrique: ['Radiateur', 'Chauffage au sol', 'Convecteur', 'Je ne sais pas'],
+          bois: ['Poêle à bois', 'Insert cheminée', 'Chaudière bois', 'Je ne sais pas'],
+          pac: ['Air/Eau', 'Air/Air', 'Je ne sais pas'],
+          charbon: ['Poêle charbon', 'Chaudière charbon']
+        };
+        const container = document.getElementById('equipementsContainer');
+        container.innerHTML = '';
+        equipements[value].forEach(option => {
+          const label = document.createElement('label');
+          label.classList.add('option');
+          let emoji = '';
+          switch (value) {
+            case 'fioul': emoji = '🛢️'; break;
+            case 'electrique': emoji = '⚡'; break;
+            case 'gaz': emoji = '🔥'; break;
+            case 'bois': emoji = '🪵'; break;
+            case 'pac': emoji = '♻️'; break;
+            case 'charbon': emoji = '🪨'; break;
+          }
+          label.innerHTML = `<input type="radio" name="equipement" value="${option}" required> ${emoji} ${option}`;
+          container.appendChild(label);
+        });
+      }
+
       currentStep++;
       if (currentStep < steps.length) {
         showStep(currentStep);
