@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateur MaPrimeRénov'</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f6f9ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 16px;
+    }
+    h2.title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 600px;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="text"], input[type="number"], input[type="email"], select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .button {
+      background-color: #3f5efb;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .button:hover {
+      opacity: 0.95;
+    }
+    .progress {
+      height: 6px;
+      background-color: #eee;
+      margin-bottom: 24px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #3f5efb;
+      width: 0;
+      transition: width 0.3s;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background-color: #f0f4ff;
+    }
+    .option input {
+      margin: 0;
+    }
+    .counter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .counter button {
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border: none;
+      background-color: #3f5efb;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .counter span {
+      font-size: 1.5rem;
+      width: 50px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2 class="title">Mes Aides Rénovation ♻️</h2>
+  <div class="container">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <form id="simulatorForm" action="https://formspree.io/f/xeoapgjz" method="POST">
+
+      <!-- Étape 1 -->
+      <div class="step active">
+        <h1>Quelle est la surface habitable approximative de votre logement ?</h1>
+        <label for="surface">Surface en m²</label>
+        <input type="number" id="surface" name="surface" required min="9">
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="step">
+        <h1>Quel est votre système de chauffage actuel ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="chauffage" value="fioul" required> 🛢️ Chauffage au fioul</label>
+          <label class="option"><input type="radio" name="chauffage" value="electrique"> ⚡ Chauffage électrique</label>
+          <label class="option"><input type="radio" name="chauffage" value="gaz"> 🔥 Chauffage au gaz</label>
+          <label class="option"><input type="radio" name="chauffage" value="bois"> 🪵 Chauffage au bois</label>
+          <label class="option"><input type="radio" name="chauffage" value="pac"> ♻️ Pompe à chaleur</label>
+          <label class="option"><input type="radio" name="chauffage" value="charbon"> 🪨 Chauffage au charbon</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="step">
+        <h1>Quel est le type d’équipement installé ?</h1>
+        <div class="options-grid" id="equipementsContainer"></div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 4 -->
+      <div class="step">
+        <h1>Adresse du bien</h1>
+        <label for="adresse">🏡 Adresse complète</label>
+        <input type="text" id="adresse" name="adresse" required>
+        <label for="codepostal">📍 Code postal</label>
+        <input type="text" id="codepostal" name="codepostal" pattern="[0-9]{5}" required>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 5 -->
+      <div class="step">
+        <h1>Quelle est la date de construction de votre bien ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="annee_construction" value="nc" required> ❓ Je ne sais pas</label>
+          <label class="option"><input type="radio" name="annee_construction" value="-1948"> 🏠 Avant 1948</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1949-1974"> 🏠 1949 à 1974</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1975-1982"> 🏠 1975 à 1982</label>
+          <label class="option"><input type="radio" name="annee_construction" value="1983-2000"> 🏠 1983 à 2000</label>
+          <label class="option"><input type="radio" name="annee_construction" value="2001-2012"> 🏠 2001 à 2012</label>
+          <label class="option"><input type="radio" name="annee_construction" value="2013+"> 🏠 Après 2012</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 6 -->
+      <div class="step">
+        <h1>Quel est votre statut vis-à-vis du logement ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="statut_logement" value="proprietaire" required> 🏠 Propriétaire occupant</label>
+          <label class="option"><input type="radio" name="statut_logement" value="bailleur"> 🏘️ Propriétaire bailleur</label>
+          <label class="option"><input type="radio" name="statut_logement" value="locataire"> 👤 Locataire</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 7 -->
+      <div class="step">
+        <h1>Quel est le revenu approximatif de votre foyer fiscal ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="revenu" value="moins25115" required> 💶 Moins de 25 115 €</label>
+          <label class="option"><input type="radio" name="revenu" value="entre25115_32197"> 💶 25 115 € à 32 197 €</label>
+          <label class="option"><input type="radio" name="revenu" value="entre32197_45340"> 💶 32 197 € à 45 340 €</label>
+          <label class="option"><input type="radio" name="revenu" value="plus45340"> 💶 Plus de 45 340 €</label>
+          <label class="option"><input type="radio" name="revenu" value="nc"> ❓ Je ne sais pas</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 8 -->
+      <div class="step">
+        <h1>Quelle est la classe énergétique de votre logement ?</h1>
+        <div class="options-grid">
+          <label class="option"><input type="radio" name="dpe" value="A" required> 🟢 A</label>
+          <label class="option"><input type="radio" name="dpe" value="B"> 🟢 B</label>
+          <label class="option"><input type="radio" name="dpe" value="C"> 🟡 C</label>
+          <label class="option"><input type="radio" name="dpe" value="D"> 🟠 D</label>
+          <label class="option"><input type="radio" name="dpe" value="E"> 🔴 E</label>
+          <label class="option"><input type="radio" name="dpe" value="F"> 🔴 F</label>
+          <label class="option"><input type="radio" name="dpe" value="G"> 🔴 G</label>
+          <label class="option"><input type="radio" name="dpe" value="NC"> ❓ Je ne sais pas</label>
+        </div>
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 9 -->
+      <div class="step">
+        <h1>Combien de personnes composent votre foyer, y compris vous-même ?</h1>
+        <p style="background-color: #fff8c5; padding: 12px; border-radius: 8px; margin-bottom: 20px;">Cette information nous permet de vous donner une estimation plus précise de vos aides !</p>
+        <div class="counter">
+          <button type="button" onclick="adjustCounter(-1)">−</button>
+          <span id="foyerCount">3</span>
+          <button type="button" onclick="adjustCounter(1)">+</button>
+        </div>
+        <input type="hidden" name="foyer" id="foyerInput" value="3">
+        <button type="button" class="button" onclick="nextStep()">Continuer</button>
+      </div>
+
+      <!-- Étape 10 : Coordonnées personnelles -->
+      <div class="step">
+        <h1>Pour recevoir votre estimation, entrez vos coordonnées :</h1>
+        <label for="nom">👤 Nom</label>
+        <input type="text" id="nom" name="nom" required>
+
+        <label for="prenom">👤 Prénom</label>
+        <input type="text" id="prenom" name="prenom" required>
+
+        <label for="telephone">📞 Téléphone</label>
+        <input type="text" id="telephone" name="telephone" required pattern="[0-9]{10}" placeholder="Ex: 0612345678">
+
+        <label for="email">📧 Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <button type="submit" class="button">Calculer mes Aides 💰</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    const steps = document.querySelectorAll('.step');
+    const progressBar = document.getElementById('progressBar');
+    let currentStep = 0;
+
+    function showStep(index) {
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', i === index);
+      });
+      progressBar.style.width = ((index + 1) / steps.length * 100) + '%';
+    }
+
+    function adjustCounter(change) {
+      const display = document.getElementById('foyerCount');
+      const hiddenInput = document.getElementById('foyerInput');
+      let value = parseInt(display.textContent);
+      value = Math.max(1, value + change);
+      display.textContent = value;
+      hiddenInput.value = value;
+    }
+
+    function nextStep() {
+  const currentFields = steps[currentStep].querySelectorAll('input[required], input[type="radio"]');
+  for (let field of currentFields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      return;
+    }
+  }
+
+  currentStep++;
+
+  if (currentStep < steps.length) {
+    showStep(currentStep);
+
+    if (currentStep === 2) {
+      const chauffageRadios = document.querySelectorAll('input[name="chauffage"]');
+      const equipements = {
+        fioul: ['Chaudière à condensation', 'Chaudière classique', 'Je ne sais pas'],
+        gaz: ['Chaudière gaz à condensation', 'Chaudière classique', 'Radiateur à gaz', 'Je ne sais pas'],
+        electrique: ['Radiateur', 'Chauffage au sol', 'Convecteur', 'Je ne sais pas'],
+        bois: ['Poêle à bois', 'Insert cheminée', 'Chaudière bois', 'Je ne sais pas'],
+        pac: ['Air/Eau', 'Air/Air', 'Je ne sais pas'],
+        charbon: ['Poêle charbon', 'Chaudière charbon']
+      };
+      const emoji = {
+        fioul: '🛢️', gaz: '🔥', electrique: '⚡', bois: '🪵', pac: '♻️', charbon: '🪨'
+      };
+      const container = document.getElementById('equipementsContainer');
+
+      chauffageRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const value = radio.value;
+          container.innerHTML = '';
+          equipements[value].forEach(option => {
+            const label = document.createElement('label');
+            label.className = 'option';
+            label.innerHTML = `<input type="radio" name="equipement" value="${option}" required> ${emoji[value]} ${option}`;
+            container.appendChild(label);
+          });
+        });
+      });
+    }
+  } else {
+    document.getElementById('simulatorForm').submit();
+  }
+}
+  </script>
+</body>
+</html>
